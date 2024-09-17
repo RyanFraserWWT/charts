@@ -8,7 +8,8 @@ global:
   #   - myRegistryKeySecretName
   ## Chart.AppVersion can be overidden using global.versions.xray, common.xrayVersion or image tags
   ## Note: Order of preference is 1) global.versions 2) common.xrayVersion 3) image tags 4) Chart.AppVersion
-  versions: {}
+  versions:
+    {}
     # xray:
     # initContainers:
     # router:
@@ -96,9 +97,9 @@ imagePullSecrets:
 ## Alternatively, systemYaml can be overidden via customInitContainers using external sources like vaults, external repositories etc. Please refer customInitContainer section below for an example.
 ## Note: Order of preference is 1) customInitContainers 2) systemYamlOverride existingSecret 3) default systemYaml in values.yaml
 systemYamlOverride:
-## You can use a pre-existing secret by specifying existingSecret
+  ## You can use a pre-existing secret by specifying existingSecret
   existingSecret:
-## The dataKey should be the name of the secret data key created.
+  ## The dataKey should be the name of the secret data key created.
   dataKey:
 
 replicaCount: 1
@@ -208,7 +209,7 @@ xray:
   ## You can modify specific entries with your own value under `xray.extraSystemYaml`, The values under extraSystemYaml overrides the values under 'xray.systemYaml' and files/system.yaml
 
   extraSystemYaml: {}
-      
+
   ## systemYaml is intentionally commented and the previous content has been moved under files/system.yaml.
   ## You have to add the all entries of the system.yaml file here, and it overrides the values in files/system.yaml.
   # systemYaml:
@@ -250,30 +251,31 @@ rbac:
   role:
     ## Rules to create. It follows the role specification
     rules:
-    - apiGroups:
-      - ''
-      resources:
-      - services
-      - endpoints
-      - pods
-      - pods/log
-      - events
-      verbs:
-      - get
-      - watch
-      - list
-    - apiGroups:
-      - 'batch'
-      resources:
-      - jobs
-      verbs:
-      - get
-      - watch
-      - list
-      - create
-      - delete
+      - apiGroups:
+          - ""
+        resources:
+          - services
+          - endpoints
+          - pods
+          - pods/log
+          - events
+        verbs:
+          - get
+          - watch
+          - list
+      - apiGroups:
+          - "batch"
+        resources:
+          - jobs
+        verbs:
+          - get
+          - watch
+          - list
+          - create
+          - delete
 
-networkpolicy: []
+networkpolicy:
+  []
   # Allows all ingress and egress
   # - name: xray
   #   podSelector:
@@ -377,7 +379,6 @@ containerSecurityContext:
   capabilities:
     drop:
       - NET_RAW
-
 
 # PostgreSQL
 ## Configuration values for the postgresql dependency
@@ -619,7 +620,7 @@ rabbitmq:
         }
   loadDefinition:
     enabled: true
-    existingSecret: '{{ .Release.Name }}-load-definition'
+    existingSecret: "{{ .Release.Name }}-load-definition"
   nodeSelector: {}
   tolerations: []
   affinity: {}
@@ -675,7 +676,6 @@ rabbitmq:
                 - list
                 - delete
 
-
   # This is automatically set based on rabbitmqTLS enabled flag.
   extraConfiguration: |-
     management.listener.ssl = {{ template "xray.rabbitmq.isManagementListenerTlsEnabledInContext" . }}
@@ -724,7 +724,7 @@ rabbitmq:
           if [ -d "$RABBITMQ_MNESIA_DIR" ]; then
              exit 0
           fi
-    
+
           # wait for zero pod to start running and accept requests
           zero_pod_name=$(echo $MY_POD_NAME | sed -E "s/-[[:digit:]]$/-0/")
           zero_pod_node_name=$(echo "$RABBITMQ_NODE_NAME" | sed -E "s/^rabbit@$MY_POD_NAME/rabbit@$zero_pod_name/")
@@ -737,7 +737,7 @@ rabbitmq:
               if [ "$i" == "$maxIterations" ]; then exit 1; fi
               i=$((i+1))
           done;   
-    
+
           # node x waits for x previous nodes to join cluster (since node number is zero based)
           nodeSerialNum=$(echo "$MY_POD_NAME" | grep -o "[0-9]*$")
           timeoutSeconds=180
@@ -762,7 +762,8 @@ common:
   # xrayVersion:
 
   # Spread Xray pods evenly across your nodes or some other topology
-  topologySpreadConstraints: []
+  topologySpreadConstraints:
+    []
     # - maxSkew: 1
     #   topologyKey: kubernetes.io/hostname
     #   whenUnsatisfiable: DoNotSchedule
@@ -920,7 +921,8 @@ analysis:
   extraEnvVars:
 
   # Add lifecycle hooks for the analysis pod
-  lifecycle: {}
+  lifecycle:
+    {}
     # postStart:
     #   exec:
     #     command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
@@ -981,7 +983,8 @@ sbom:
   extraEnvVars:
 
   # Add lifecycle hooks for the indexer pod
-  lifecycle: {}
+  lifecycle:
+    {}
     # postStart:
     #   exec:
     #     command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
@@ -1046,7 +1049,8 @@ panoramic:
   extraEnvVars:
 
   # Add lifecycle hooks for the indexer pod
-  lifecycle: {}
+  lifecycle:
+    {}
     # postStart:
     #   exec:
     #     command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
@@ -1110,7 +1114,8 @@ policyenforcer:
   extraEnvVars:
 
   # Add lifecycle hooks for the indexer pod
-  lifecycle: {}
+  lifecycle:
+    {}
     # postStart:
     #   exec:
     #     command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
@@ -1159,8 +1164,7 @@ policyenforcer:
   #    cpu: "100m"
   #  limits:
   #    memory: "2Gi"
-  #    cpu: "1" 
-
+  #    cpu: "1"
 
 indexer:
   name: xray-indexer
@@ -1175,7 +1179,8 @@ indexer:
   extraEnvVars:
 
   # Add lifecycle hooks for the indexer pod
-  lifecycle: {}
+  lifecycle:
+    {}
     # postStart:
     #   exec:
     #     command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
@@ -1236,7 +1241,8 @@ persist:
   extraEnvVars:
 
   # Add lifecycle hooks for the persist pod
-  lifecycle: {}
+  lifecycle:
+    {}
     # postStart:
     #   exec:
     #     command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
@@ -1296,7 +1302,8 @@ server:
   annotations: {}
   extraEnvVars:
   # Add lifecycle hooks for the insight pods
-  lifecycle: {}
+  lifecycle:
+    {}
     # postStart:
     #   exec:
     #     command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
@@ -1394,7 +1401,8 @@ router:
   #    cpu: "1"
   extraEnvVars:
   # Add lifecycle hooks for the router pod
-  lifecycle: {}
+  lifecycle:
+    {}
     # postStart:
     #   exec:
     #     command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
@@ -1425,7 +1433,7 @@ router:
 
   readinessProbe:
     enabled: true
-    config: | 
+    config: |
       httpGet:
         path: /router/api/v1/system/readiness
         port: {{ .Values.router.internalPort }}
@@ -1471,7 +1479,8 @@ observability:
   #    cpu: "1"
 
   # Add lifecycle hooks for the observability pod
-  lifecycle: {}
+  lifecycle:
+    {}
     # postStart:
     #   exec:
     #     command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
@@ -1609,78 +1618,78 @@ quota:
 ## Separate Xray into distinct pods
 ## (Enabling this setting will divide the Xray pod into two deployments: xray-server and xray-ipa)
 splitXraytoSeparateDeployments:
- enabled: false
- ## To prevent downtime (both the statefulset pod and deployment pod are kept together, with gradual upgrade set to false, which can turn off statefulsets in subsequent upgrades)
- gradualUpgrade: false
+  enabled: false
+  ## To prevent downtime (both the statefulset pod and deployment pod are kept together, with gradual upgrade set to false, which can turn off statefulsets in subsequent upgrades)
+  gradualUpgrade: false
 replicaCountServer: 2
 ## Apply horizontal pod auto scaling on Xray server pods
 ## Only applicable when (splitXraytoSeparateDeployments.enabled) is set to true
 ## Ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
 autoscalingServer:
- enabled: false
- minReplicas: 2
- maxReplicas: 3
- targetCPUUtilizationPercentage: 70
- targetMemoryUtilizationPercentage: 90
- ## Specify if using the keda hpa or regular basic hpa
- ## Note: keda should be installed on the target cluster
- ## Ref: https://keda.sh/docs/2.10/deploy/
- keda:
-   enabled: false
-   scaleUp:
-     stabilizationWindowSeconds: 90
-     policies:
-       - type: Pods
-         value: 3
-         periodSeconds: 30
-   scaleDown:
-     stabilizationWindowSeconds: 90
-     policies:
-       - type: Pods
-         value: 1
-         periodSeconds: 30
-   pollingInterval: 10
-   cooldownPeriod: 10
-   queues:
-     - name: policyEnforcer
-       value: "100"
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 90
+  ## Specify if using the keda hpa or regular basic hpa
+  ## Note: keda should be installed on the target cluster
+  ## Ref: https://keda.sh/docs/2.10/deploy/
+  keda:
+    enabled: false
+    scaleUp:
+      stabilizationWindowSeconds: 90
+      policies:
+        - type: Pods
+          value: 3
+          periodSeconds: 30
+    scaleDown:
+      stabilizationWindowSeconds: 90
+      policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 30
+    pollingInterval: 10
+    cooldownPeriod: 10
+    queues:
+      - name: policyEnforcer
+        value: "100"
 ## Apply horizontal pod auto scaling on Xray ipa pods
 ## Only applicable when (splitXraytoSeparateDeployments.enabled) is set to true
 ## Ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
 autoscalingIpa:
- enabled: false
- minReplicas: 1
- maxReplicas: 3
- targetCPUUtilizationPercentage: 70
- targetMemoryUtilizationPercentage: 90
- ## Specify if using the keda hpa or regular basic hpa
- ## Note: keda should be installed on the target cluster
- ## Ref: https://keda.sh/docs/2.10/deploy/
- keda:
-   enabled: false
-   scaleUp:
-     stabilizationWindowSeconds: 90
-     policies:
-       - type: Pods
-         value: 3
-         periodSeconds: 30
-   scaleDown:
-     stabilizationWindowSeconds: 90
-     policies:
-       - type: Pods
-         value: 1
-         periodSeconds: 30
-   pollingInterval: 10
-   cooldownPeriod: 10
-   queues:
-     - name: analysis
-       value: "100"
-     - name: index
-       value: "100"
-     - name: persist
-       value: "100"
-     - name: impactAnalysis
-       value: "100"
-     - name: policyEnforcer
-       value: "100"
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 90
+  ## Specify if using the keda hpa or regular basic hpa
+  ## Note: keda should be installed on the target cluster
+  ## Ref: https://keda.sh/docs/2.10/deploy/
+  keda:
+    enabled: false
+    scaleUp:
+      stabilizationWindowSeconds: 90
+      policies:
+        - type: Pods
+          value: 3
+          periodSeconds: 30
+    scaleDown:
+      stabilizationWindowSeconds: 90
+      policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 30
+    pollingInterval: 10
+    cooldownPeriod: 10
+    queues:
+      - name: analysis
+        value: "100"
+      - name: index
+        value: "100"
+      - name: persist
+        value: "100"
+      - name: impactAnalysis
+        value: "100"
+      - name: policyEnforcer
+        value: "100"
 ###################################################################################
